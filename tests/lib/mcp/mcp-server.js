@@ -15,6 +15,7 @@ const path = require("node:path");
 const { Client } = require("@modelcontextprotocol/sdk/client/index.js");
 const { InMemoryTransport } = require("@modelcontextprotocol/sdk/inMemory.js");
 const sinon = require("sinon");
+const { WarningService } = require("../../../lib/services/warning-service.js");
 
 //-----------------------------------------------------------------------------
 // Helpers
@@ -57,11 +58,8 @@ describe("MCP Server", () => {
 		await mcpServer.connect(serverTransport);
 		await client.connect(clientTransport);
 
-		sinon
-			.stub(process, "emitWarning")
-			.callThrough()
-			.withArgs(sinon.match.any, "ESLintIgnoreWarning")
-			.returns();
+		// Silence ".eslintignore" warnings for tests
+		sinon.stub(WarningService.prototype, "emitESLintIgnoreWarning");
 	});
 
 	afterEach(() => {
